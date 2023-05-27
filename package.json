@@ -1,0 +1,16 @@
+{
+  "name": "autocomplete-openapi",
+  "version": "1.0.0",
+  "description": "Autocompletes different parts of an OpenAPI spec",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha tests/**/*.tests.js --reporter spec"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+  },
+  "devDependencies": {
+    "mocha": "^10.2.0"
+  }
+}
