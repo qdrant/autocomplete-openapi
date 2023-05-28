@@ -25,3 +25,5 @@ Which parts are autocompleted?
 
 
 Use OpenAPI v3 schemas for autocompletion. The schemas can be provided as a JSON file.
+
+WARNING: This project is developed to be used with Qdrant OpenAPI schemas. It may not work with other schemas. Please, feel free to open a PR or fork the project if you want to make it more generic.
