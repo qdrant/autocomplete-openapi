@@ -111,10 +111,17 @@ class AutocompleteTrie {
                     specialFoo[pathToken][1]
                 );
             } else {
+
+                let acceptedFoo = (token) => pathToken === token;
+                // Check is `pathToken` is a placeholder, i.e. starts with `{` and ends with `}`
+                if (pathToken.startsWith("{") && pathToken.endsWith("}")) {
+                    acceptedFoo = (token) => token === pathToken || token.match(/\w+/);
+                }
+
                 // No child found, add a new one
                 newChild = new AutocompleteTrieNone(
                     pathToken,
-                    (token) => pathToken === token,
+                    acceptedFoo,
                     (token) => pathToken.startsWith(token) ? [pathToken] : []
                 );
             }

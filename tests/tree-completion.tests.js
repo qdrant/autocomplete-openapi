@@ -26,7 +26,7 @@ describe("Tree completion", () => {
         let specialFoo = {
             "{collection_name}": [
                 // match any word by regex
-                (token) => token == "{collection_name}" || token.match(/\w+/),
+                (token) => token === "{collection_name}" || token.match(/\w+/),
                 // complete with all words
                 (token) => [],
             ]

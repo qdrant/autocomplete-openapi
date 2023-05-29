@@ -17,7 +17,7 @@ class OpenAPIExtractor {
         let methods = [];
 
         for (let path in this.openapi.paths) {
-            for (let method in openapi.paths[path]) {
+            for (let method in this.openapi.paths[path]) {
                 methods.push(new OpenAPIMethod(
                     method,
                     path,
@@ -137,6 +137,23 @@ class OpenAPIExtractor {
         let current = this.objectByRef(startRef);
 
         return this._objectsByPath(current, path);
+    }
+
+    allProperties(startRef, path, prefix) {
+        let objects = this.objectsByPath(startRef, path);
+
+        let properties = [];
+
+        for (let object of objects) {
+            if (object?.properties) {
+                for (let propertyName in object.properties) {
+                    if (propertyName.startsWith(prefix)) {
+                        properties.push(propertyName);
+                    }
+                }
+            }
+        }
+        return properties;
     }
 }
 

@@ -273,7 +273,7 @@ function unstrip(tokens) {
             value: ','
           });
         }
-        
+
         tokens.push(...[
           {
             type: 'string',
@@ -322,7 +322,7 @@ function partialParse(input) {
 
   let strippedLength = tokensLength - stripped.length;
 
-  let strippedTail =  strippedLength > 0 ? tokens.slice(-strippedLength) : [];
+  let strippedTail = strippedLength > 0 ? tokens.slice(-strippedLength) : [];
 
   let unstripped = unstrip(stripped);
 
@@ -341,6 +341,97 @@ class ParseResult {
     this.data = data; // Parsed json as much as possible
     this.path = path; // Path in the json object where we have a cursor position
     this.editedChunk = editedChunk; // Currently edited chunk
+  }
+
+
+  /// Parse the edited chunk and return the result
+  /// Example:
+  /// '' -> {"key": null, "value": null, editing: null}
+  /// ', ' -> {"key": null, "value": null, editing: null}
+  /// ', "a ' -> {"key": "", "value": null, editing: "key"}
+  /// ', "a": ' -> {"key": "a", "value": null, editing: null}
+  /// ', "a": "a' -> {"key": "a", "value": a, editing: "value"}
+  getEditedChunk() {
+
+    let editing = null;
+    let value = null;
+    let key = null;
+
+    // Remove staring comma
+    let editedChunk = this.editedChunk;
+    if (editedChunk.startsWith(",")) {
+      editedChunk = editedChunk.slice(1).trim();
+    }
+
+    if (editedChunk === "") {
+      return {
+        key: null,
+        value: null,
+        editing: null,
+      };
+    }
+
+    // Try to split the edited chunk by ":"
+    let split = editedChunk.split(":");
+
+    // If there is no ":" in the edited chunk, we are editing the key
+    if (split.length === 1) {
+
+      key = split[0].trim();
+
+      if (key.startsWith('"')) {
+        key = key.slice(1);
+      }
+
+      if (key.endsWith('"')) {
+        key = key.slice(0, -1);
+      } else {
+        editing = "key";
+      }
+    }
+
+    if (split.length !== 2) {
+      // This is unexpected, probably some value in the json is usign ":" character,
+      // better skip the completion
+      return {
+        key: key,
+        value: value,
+        editing: editing,
+      };
+    }
+
+    key = split[0].trim();
+
+    if (key.startsWith('"')) {
+      key = key.slice(1);
+    }
+
+    if (key.endsWith('"')) {
+      key = key.slice(0, -1);
+    }
+
+    value = split[1].trim();
+
+    if (value !== "") {
+
+      if (value.startsWith('"')) {
+        value = value.slice(1);
+      }
+
+      if (value.endsWith('"')) {
+        value = value.slice(0, -1);
+      } else {
+        editing = "value";
+      }
+    } else {
+      value = null;
+    }
+
+    return {
+      key: key,
+      value: value,
+      editing: editing,
+    };
   }
 }
 
