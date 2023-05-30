@@ -490,7 +490,7 @@ function extractPath(data) {
 
 
 /// returns `ParseResult`
-function partialParseJson(jsonString) {
+export function partialParseJson(jsonString) {
 
   let partialJson = [{}, "", ""];
   try {
@@ -504,5 +504,3 @@ function partialParseJson(jsonString) {
   return new ParseResult(partialJson[0], path, partialJson[1]);
 }
 
-
-exports.partialParseJson = partialParseJson;

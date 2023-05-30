@@ -1,9 +1,8 @@
 "use strict";
 
+import assert from 'assert';
 
-const assert = require("assert");
-
-const autocomplete = require("../src/trie-completion");
+import { AutocompleteTrie } from "../src/trie-completion.js";
 
 
 describe("Tree completion", () => {
@@ -21,7 +20,7 @@ describe("Tree completion", () => {
         ]
 
 
-        let trie = new autocomplete.AutocompleteTrie();
+        let trie = new AutocompleteTrie();
 
         let specialFoo = {
             "{collection_name}": [

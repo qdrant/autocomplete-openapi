@@ -1,4 +1,4 @@
-function tokenizeHeader(header) {
+export function tokenizeHeader(header) {
 
     // Remove everything after the `?` character
     let clearedHeader = header.split("?")[0];
@@ -19,7 +19,3 @@ function tokenizeHeader(header) {
 
     return [method, ...pathTokens]
 }
-
-
-exports.tokenizeHeader = tokenizeHeader;
-

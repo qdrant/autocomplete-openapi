@@ -1,5 +1,5 @@
 
-class OpenAPIMethod {
+export class OpenAPIMethod {
     constructor(method, path, body) {
         this.method = method;
         this.path = path;
@@ -8,7 +8,7 @@ class OpenAPIMethod {
 }
 
 
-class OpenAPIExtractor {
+export class OpenAPIExtractor {
     constructor(openapi) {
         this.openapi = openapi;
     }
@@ -156,6 +156,3 @@ class OpenAPIExtractor {
         return properties;
     }
 }
-
-
-exports.OpenAPIExtractor = OpenAPIExtractor;

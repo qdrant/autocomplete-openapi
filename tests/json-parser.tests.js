@@ -1,24 +1,23 @@
 "use strict";
 
-
-const parser = require("../src/json-parser");
-const assert = require("assert");
+import assert from 'assert';
+import { partialParseJson } from "../src/json-parser.js";
 
 
 describe("JSON partial parser", () => {
 
     it("should not parse empty string", () => {
-        const result = parser.partialParseJson("");
+        const result = partialParseJson("");
         assert.deepEqual(result.data, null);
     });
 
     it("should not parse garbage", () => {
-        const result = parser.partialParseJson("garbage");
+        const result = partialParseJson("garbage");
         assert.deepEqual(result.data, null);
     });
 
     it("should return current chunk", () => {
-        const result = parser.partialParseJson('{"key": { ');
+        const result = partialParseJson('{"key": { ');
 
         // console.log(result);
     });
@@ -26,42 +25,42 @@ describe("JSON partial parser", () => {
     it("should parse partial object", () => {
         let result = {};
 
-        result = parser.partialParseJson('{ "key": "123" ');
+        result = partialParseJson('{ "key": "123" ');
         assert.deepEqual(result.data, {"key": "123"});
         assert.deepEqual(result.path, []);
         assert.equal(result.editedChunk, '');
 
-        result = parser.partialParseJson('{ "key": "123", ');
+        result = partialParseJson('{ "key": "123", ');
         assert.deepEqual(result.data, {"key": "123"});
         assert.deepEqual(result.path, []);
         assert.equal(result.editedChunk, ',');
 
-        result = parser.partialParseJson('{ "key": "123", "');
+        result = partialParseJson('{ "key": "123", "');
         assert.deepEqual(result.data, {"key": "123"});
         assert.deepEqual(result.path, []);
         assert.equal(result.editedChunk, ',"');
 
-        result = parser.partialParseJson('{ "key": "123", "a');
+        result = partialParseJson('{ "key": "123", "a');
         assert.deepEqual(result.data, {"key": "123"});
         assert.deepEqual(result.path, []);
         assert.equal(result.editedChunk, ',"a');
 
-        result = parser.partialParseJson('{ "key": "123", "a"');
+        result = partialParseJson('{ "key": "123", "a"');
         assert.deepEqual(result.data, {"key": "123"});
         assert.deepEqual(result.path, []);
         assert.equal(result.editedChunk, ',"a"');
 
-        result = parser.partialParseJson('{ "key": "123", "a":');
+        result = partialParseJson('{ "key": "123", "a":');
         assert.deepEqual(result.data, {"key": "123"});
         assert.deepEqual(result.path, []);
         assert.equal(result.editedChunk, ',"a":');
 
-        result = parser.partialParseJson('{ "key": "123", "a": "');
+        result = partialParseJson('{ "key": "123", "a": "');
         assert.deepEqual(result.data, {"key": "123"});
         assert.deepEqual(result.path, []);
         assert.equal(result.editedChunk, ',"a":"');
 
-        result = parser.partialParseJson('{ "key": "123", "a": "a');
+        result = partialParseJson('{ "key": "123", "a": "a');
         assert.deepEqual(result.data, {"key": "123"});
         assert.deepEqual(result.path, []);
         assert.equal(result.editedChunk, ',"a":"a');
@@ -71,7 +70,7 @@ describe("JSON partial parser", () => {
     it("should parse partial nested", () => {
         let result = {};
 
-        result = parser.partialParseJson('{ "key": {');
+        result = partialParseJson('{ "key": {');
         assert.deepEqual(result.data, {"key": {}});
         assert.deepEqual(result.path, ["key"]);
         assert.equal(result.editedChunk, '');
@@ -81,7 +80,7 @@ describe("JSON partial parser", () => {
 
 
 
-        result = parser.partialParseJson('{ "key": { "a');
+        result = partialParseJson('{ "key": { "a');
         assert.deepEqual(result.data, {"key": {}});
         assert.deepEqual(result.path, ["key"]);
         assert.equal(result.editedChunk, '"a');
@@ -90,7 +89,7 @@ describe("JSON partial parser", () => {
         assert.equal(result.getEditedChunk().editing, "key");
 
 
-        result = parser.partialParseJson('{ "key": { "a"');
+        result = partialParseJson('{ "key": { "a"');
         assert.deepEqual(result.data, {"key": {}});
         assert.deepEqual(result.path, ["key"]);
         assert.equal(result.editedChunk, '"a"');
@@ -98,7 +97,7 @@ describe("JSON partial parser", () => {
         assert.equal(result.getEditedChunk().value, null);
         assert.equal(result.getEditedChunk().editing, null);
 
-        result = parser.partialParseJson('{ "key": { "a":');
+        result = partialParseJson('{ "key": { "a":');
         assert.deepEqual(result.data, {"key": {}});
         assert.deepEqual(result.path, ["key"]);
         assert.equal(result.editedChunk, '"a":');
@@ -106,7 +105,7 @@ describe("JSON partial parser", () => {
         assert.equal(result.getEditedChunk().value, null);
         assert.equal(result.getEditedChunk().editing, null);
 
-        result = parser.partialParseJson('{ "key": { "a": "');
+        result = partialParseJson('{ "key": { "a": "');
         assert.deepEqual(result.data, {"key": {}});
         assert.deepEqual(result.path, ["key"]);
         assert.equal(result.editedChunk, '"a":"');
@@ -114,7 +113,7 @@ describe("JSON partial parser", () => {
         assert.equal(result.getEditedChunk().value, "");
         assert.equal(result.getEditedChunk().editing, "value");
 
-        result = parser.partialParseJson('{ "key": { "a": "a');
+        result = partialParseJson('{ "key": { "a": "a');
         assert.deepEqual(result.data, {"key": {}});
         assert.deepEqual(result.path, ["key"]);
         assert.equal(result.editedChunk, '"a":"a');
@@ -122,7 +121,7 @@ describe("JSON partial parser", () => {
         assert.equal(result.getEditedChunk().value, "a");
         assert.equal(result.getEditedChunk().editing, "value");
 
-        result = parser.partialParseJson('{ "key": { "a": "a"');
+        result = partialParseJson('{ "key": { "a": "a"');
         assert.deepEqual(result.data, {"key": {"a": "a"}});
         assert.deepEqual(result.path, ["key"]);
         assert.equal(result.editedChunk, '');
@@ -134,17 +133,17 @@ describe("JSON partial parser", () => {
     it("should parse partial nested array", () => {
         let result = {};
 
-        result = parser.partialParseJson('{ "key": [{"a": "a"}, {');
+        result = partialParseJson('{ "key": [{"a": "a"}, {');
         assert.deepEqual(result.data, {"key": [{"a": "a"}, {}]});
         assert.deepEqual(result.path, ["key", 1]);
         assert.equal(result.editedChunk, '');
 
-        result = parser.partialParseJson('{ "key": [{"a": "a"}, {"b');
+        result = partialParseJson('{ "key": [{"a": "a"}, {"b');
         assert.deepEqual(result.data, {"key": [{"a": "a"}, {}]});
         assert.deepEqual(result.path, ["key", 1]);
         assert.equal(result.editedChunk, '"b');
 
-        result = parser.partialParseJson('{"x": [], "key": [{"a": "a"}, {"b');
+        result = partialParseJson('{"x": [], "key": [{"a": "a"}, {"b');
         assert.deepEqual(result.data, {"x": [], "key": [{"a": "a"}, {}]});
         assert.deepEqual(result.path, ["key", 1]);
         assert.equal(result.editedChunk, '"b');
@@ -153,7 +152,7 @@ describe("JSON partial parser", () => {
     it("should parse partial deep nested array", () => {
         let result = {};
 
-        result = parser.partialParseJson('{ "key": [{"a": "a"}, {"b": ["b", {');
+        result = partialParseJson('{ "key": [{"a": "a"}, {"b": ["b", {');
         assert.deepEqual(result.data, {"key": [{"a": "a"}, {"b": ["b", {}]}]});
         assert.deepEqual(result.path, ["key", 1, "b", 1]);
 
@@ -162,12 +161,12 @@ describe("JSON partial parser", () => {
     it("should parse complete object", () => {
         let result = {};
 
-        result = parser.partialParseJson('{ "key": "123" }');
+        result = partialParseJson('{ "key": "123" }');
         assert.deepEqual(result.data, {"key": "123"});
         assert.deepEqual(result.path, []);
         assert.equal(result.editedChunk, '');
 
-        result = parser.partialParseJson('{ "key": "123", "a": "a" }');
+        result = partialParseJson('{ "key": "123", "a": "a" }');
         assert.deepEqual(result.data, {"key": "123", "a": "a"});
         assert.deepEqual(result.path, []);
         assert.equal(result.editedChunk, '');

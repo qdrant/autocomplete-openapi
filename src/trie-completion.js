@@ -1,7 +1,7 @@
 
 
 
-class AutocompleteTrieNone {
+export class AutocompleteTrieNone {
     constructor(name, accepted, completable) {
         this.name = name; // name of the node
         this.accepted = accepted; // function which decides if the token is accepted as a full token, returns true or false
@@ -20,7 +20,7 @@ class AutocompleteTrieNone {
 }
 
 
-class AutocompleteTrie {
+export class AutocompleteTrie {
     constructor() {
         this.root = new AutocompleteTrieNone(
             "root",
@@ -133,9 +133,4 @@ class AutocompleteTrie {
         current.setTerminal(idx);
     }
 }
-
-
-exports.AutocompleteTrieNone = AutocompleteTrieNone;
-exports.AutocompleteTrie = AutocompleteTrie;
-
 

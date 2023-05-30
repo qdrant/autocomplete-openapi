@@ -1,17 +1,15 @@
 "use strict";
 
+import assert from 'assert';
 
-const assert = require("assert");
-
-const parser = require("../src/parse-request-header");
-
+import { tokenizeHeader } from "../src/parse-request-header.js";
 
 describe("Parse request header", () => {
 
     it("should parse a simple header", () => {
         let tokens = [];
 
-        const tokenizer = parser.tokenizeHeader;
+        const tokenizer = tokenizeHeader;
 
 
         tokens = tokenizer("POST /collections/{collection_name}/points/delete");

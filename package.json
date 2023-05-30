@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "Autocompletes different parts of an OpenAPI spec",
   "main": "index.js",
+  "type": "module",
   "scripts": {
     "test": "mocha tests/**/*.tests.js --reporter spec"
   },

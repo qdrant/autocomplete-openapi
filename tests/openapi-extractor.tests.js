@@ -1,25 +1,24 @@
 "use strict";
 
 
-const extractor = require("../src/openapi-extractor");
-const assert = require("assert");
+import assert from 'assert';
 
-const openapi = require("./data/openapi.json");
-
+import openapi from "./data/openapi.json" assert { type: "json" };
+import { OpenAPIExtractor } from "../src/openapi-extractor.js";
 
 
 describe("OpenAPI extractor", () => {
 
     it("should extract all methods", () => {
-        let allMethods = new extractor.OpenAPIExtractor(openapi).getAllMethods();
+        let allMethods = new OpenAPIExtractor(openapi).getAllMethods();
 
         for (let method of allMethods) {
-            console.log(method);
+            // console.log(method);
         }
     });
 
     it("should extract model object by ref", () => {
-        let objects = new extractor.OpenAPIExtractor(openapi).objectByRef("#/components/schemas/CreateCollection");
+        let objects = new OpenAPIExtractor(openapi).objectByRef("#/components/schemas/CreateCollection");
 
         // console.log(object);
     });
@@ -27,7 +26,7 @@ describe("OpenAPI extractor", () => {
 
     it("should extract model object by path", () => {
         let objects = [];
-        let openapiExtractor = new extractor.OpenAPIExtractor(openapi);
+        let openapiExtractor = new OpenAPIExtractor(openapi);
 
         objects = openapiExtractor.objectsByPath("#/components/schemas/CreateCollection", ["vectors", "image", "quantization_config"]);
         assert.equal(objects.length, 2); // scalar and product
