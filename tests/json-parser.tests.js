@@ -22,6 +22,17 @@ describe("JSON partial parser", () => {
         // console.log(result);
     });
 
+    it("should parse object with multiple keys", () => {
+        let result = {};
+
+        result = partialParseJson('{ "key": {"b": "123"}, "');
+
+        assert.deepEqual(result.data, {"key": {"b": "123"}});
+        assert.deepEqual(result.path, []);
+        assert.equal(result.editedChunk, ',"');
+
+    });
+
     it("should parse partial object", () => {
         let result = {};
 
@@ -76,8 +87,7 @@ describe("JSON partial parser", () => {
         assert.equal(result.editedChunk, '');
         assert.equal(result.getEditedChunk().key, null);
         assert.equal(result.getEditedChunk().value, null);
-        assert.equal(result.getEditedChunk().editing, null);
-
+        assert.equal(result.getEditedChunk().editing, "key");
 
 
         result = partialParseJson('{ "key": { "a');
@@ -103,7 +113,7 @@ describe("JSON partial parser", () => {
         assert.equal(result.editedChunk, '"a":');
         assert.equal(result.getEditedChunk().key, "a");
         assert.equal(result.getEditedChunk().value, null);
-        assert.equal(result.getEditedChunk().editing, null);
+        assert.equal(result.getEditedChunk().editing, "value");
 
         result = partialParseJson('{ "key": { "a": "');
         assert.deepEqual(result.data, {"key": {}});
@@ -128,6 +138,14 @@ describe("JSON partial parser", () => {
         assert.equal(result.getEditedChunk().key, null);
         assert.equal(result.getEditedChunk().value, null);
         assert.equal(result.getEditedChunk().editing, null);
+
+        result = partialParseJson('{ "key": { "a": "a", ');
+        assert.deepEqual(result.data, {"key": {"a": "a"}});
+        assert.deepEqual(result.path, ["key"]);
+        assert.equal(result.editedChunk, ',');
+        assert.equal(result.getEditedChunk().key, null);
+        assert.equal(result.getEditedChunk().value, null);
+        assert.equal(result.getEditedChunk().editing, "key");
     });
 
     it("should parse partial nested array", () => {
@@ -163,12 +181,12 @@ describe("JSON partial parser", () => {
 
         result = partialParseJson('{ "key": "123" }');
         assert.deepEqual(result.data, {"key": "123"});
-        assert.deepEqual(result.path, []);
+        assert.deepEqual(result.path, null);
         assert.equal(result.editedChunk, '');
 
         result = partialParseJson('{ "key": "123", "a": "a" }');
         assert.deepEqual(result.data, {"key": "123", "a": "a"});
-        assert.deepEqual(result.path, []);
+        assert.deepEqual(result.path, null);
         assert.equal(result.editedChunk, '');
     });
 

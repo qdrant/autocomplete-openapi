@@ -344,12 +344,25 @@ class ParseResult {
   }
 
 
+  getObjectByPath() {
+    let current = this.data;
+    for (let i = 0; i < this.path.length; i++) {
+      let pathElement = this.path[i];
+      current = current[pathElement];
+    }
+    return current;
+  }
+
   /// Parse the edited chunk and return the result
   /// Example:
-  /// '' -> {"key": null, "value": null, editing: null}
-  /// ', ' -> {"key": null, "value": null, editing: null}
-  /// ', "a ' -> {"key": "", "value": null, editing: "key"}
-  /// ', "a": ' -> {"key": "a", "value": null, editing: null}
+  /// '' 
+  ///    if the only element in selected object -> {"key": null, "value": null, editing: "key"}
+  ///    if there are more elements in the selected object (require comma) -> {"key": null, "value": null, editing: null}
+  /// ', ' -> {"key": null, "value": null, editing: "key"}
+  /// ', "' -> {"key": "", "value": null, editing: "key"}
+  /// ', "a' -> {"key": "a", "value": null, editing: "key"}
+  /// ', "a"' -> {"key": "a", "value": null, editing: null}
+  /// ', "a": ' -> {"key": "a", "value": null, editing: "value"}
   /// ', "a": "a' -> {"key": "a", "value": a, editing: "value"}
   getEditedChunk() {
 
@@ -359,15 +372,43 @@ class ParseResult {
 
     // Remove staring comma
     let editedChunk = this.editedChunk;
+
+    let emptyEditing = null;
+
+    let currentObject = this.getObjectByPath();
+    // Check if there are other keys in the object
+    if (currentObject instanceof Object && Object.keys(currentObject).length > 0) {
+      // Require comma to do the completion
+      emptyEditing = null;
+    } else {
+      // Fist element in the object, no comma required
+      emptyEditing = "key";
+    }
+
+    if (!editedChunk) {
+      return {
+        key: null,
+        value: null,
+        editing: emptyEditing,
+      };
+    }
+
     if (editedChunk.startsWith(",")) {
       editedChunk = editedChunk.slice(1).trim();
+      if (editedChunk === "") {
+        return {
+          key: null,
+          value: null,
+          editing: "key",
+        };
+      }
     }
 
     if (editedChunk === "") {
       return {
         key: null,
         value: null,
-        editing: null,
+        editing: emptyEditing,
       };
     }
 
@@ -384,6 +425,7 @@ class ParseResult {
       }
 
       if (key.endsWith('"')) {
+        // We have key, but no value
         key = key.slice(0, -1);
       } else {
         editing = "key";
@@ -412,6 +454,8 @@ class ParseResult {
 
     value = split[1].trim();
 
+    editing = "value";
+
     if (value !== "") {
 
       if (value.startsWith('"')) {
@@ -419,9 +463,8 @@ class ParseResult {
       }
 
       if (value.endsWith('"')) {
+        editing = null;
         value = value.slice(0, -1);
-      } else {
-        editing = "value";
       }
     } else {
       value = null;
@@ -467,7 +510,7 @@ function extractPath(data) {
   if (data instanceof Object) {
     /// Check if the object has `trancingValue` key
     if (!data.hasOwnProperty(trancingValue)) {
-      return [];
+      return null;
     }
 
     delete data[trancingValue];

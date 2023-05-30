@@ -43,7 +43,7 @@ export class OpenapiAutocomplete {
     completeRequestBody(requestHeader, requestJson) {
         let tokens = tokenizeHeader(requestHeader);
         let dataRef = this.trieCompletion.match(tokens);
-
+        
         if (!dataRef) {
             return [];
         }
@@ -57,7 +57,17 @@ export class OpenapiAutocomplete {
             return [];
         }
 
-        let result = this.extractor.allProperties(dataRef, jsonParsedResult.path, editingChunk.key);
+        let result = this.extractor.allProperties(dataRef, jsonParsedResult.path, editingChunk.key || "");
+
+        if (editingChunk.key === null) {
+            // If there is no key, then we should autocomplete with open quote
+
+            result = result.map((s) => '"' + s + '": ');
+        } else {
+            // If there is a key, then we should autocomplete with closing quote only
+
+            result = result.map((s) => s + '": ');
+        }
 
         return result;
     }

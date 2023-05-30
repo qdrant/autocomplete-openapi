@@ -6,8 +6,13 @@ export function tokenizeHeader(header) {
     // Remove the leading `/`
     let methodAndPath = clearedHeader.split(/\s+/);
 
+    // Trim whilespaces after the second part of the header
+    if (methodAndPath.length == 3 && methodAndPath[2] == "") {
+        methodAndPath.pop();
+    }
+
     if (methodAndPath.length != 2) {
-        return null;
+        return methodAndPath; // only method
     }
 
     let method = methodAndPath[0];

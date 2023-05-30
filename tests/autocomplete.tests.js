@@ -15,6 +15,13 @@ describe("OpenAPI autocomplete", () => {
         let theAuto = new OpenapiAutocomplete(openapi, ["my_collection", "my_collection2"]);
 
         let completions = [];
+
+
+        completions = theAuto.completeRequestHeader("P");
+
+        assert.ok(completions.includes("POST"));
+        assert.ok(completions.includes("PUT"));
+        assert.ok(completions.includes("PATCH"));
         
         completions = theAuto.completeRequestHeader("POST ");
 
@@ -56,16 +63,51 @@ describe("OpenAPI autocomplete", () => {
 
 
         let completions = [];
+        let requestHeader = ""
+        let body = "";
 
-        let requestHeader = "POST /collections/my_collection/points/search";
+        requestHeader = "POST /collections/my_collection/points/search";
 
         completions = theAuto.completeRequestBody(requestHeader, '{"vector": {"');
 
-        assert.ok(completions.includes("name"));
-        assert.ok(completions.includes("vector"));
+        assert.ok(completions.includes('name": '));
+        assert.ok(completions.includes('vector": '));
 
         completions = theAuto.completeRequestBody(requestHeader, '{"v');
-        assert.deepEqual(completions, ["vector"]);
+        assert.deepEqual(completions, ['vector": ']);
 
+        requestHeader = "PUT /collections/demo1";
+        body = `
+        {
+            "optimizers_config": {
+                "default_segment_number": 12    
+            },
+            `;
+        
+        completions = theAuto.completeRequestBody(requestHeader, body);
+        assert.ok(completions.includes('"hnsw_config": '));
+
+        requestHeader = "PUT /collections/demo1";
+        body = `
+        {
+            "optimizers_config": {
+                "default_segment_number": 12    
+            },
+            "`;
+        
+        completions = theAuto.completeRequestBody(requestHeader, body);
+        assert.ok(completions.includes('hnsw_config": '));
+
+        requestHeader = "PUT /collections/demo1";
+        body = `
+        {
+            "optimizers_config": {
+                "default_segment_number": 12    
+            }, `;
+        
+        completions = theAuto.completeRequestBody(requestHeader, body);
+        assert.ok(completions.includes('"hnsw_config": '));
+
+        console.log("completions", completions);
     });
 });

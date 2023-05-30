@@ -31,7 +31,7 @@ describe("Parse request header", () => {
         assert.deepEqual(tokens, ["POST", "collections", "{collection_name}", "points"]);
 
         tokens = tokenizer("lalala");
-        assert.deepEqual(tokens, null);
+        assert.deepEqual(tokens, ["lalala"]);
     });
 
 });
