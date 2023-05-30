@@ -1,6 +1,6 @@
 {
   "name": "autocomplete-openapi",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "description": "Autocompletes different parts of an OpenAPI spec",
   "main": "index.js",
   "type": "module",
