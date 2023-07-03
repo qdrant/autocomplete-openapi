@@ -71,4 +71,35 @@ export class OpenapiAutocomplete {
 
         return result;
     }
+
+    /// Expect full dataRef, e.g. "#/components/schemas/FilterRequest"
+    /// And partial request body, e.g. '{"vectors": {'
+    completeRequestBodyByDataRef(dataRef, requestJson) {
+        if (!dataRef) {
+            return [];
+        }
+
+        let jsonParsedResult = partialParseJson(requestJson);
+
+        let editingChunk = jsonParsedResult.getEditedChunk();
+
+        if (editingChunk.editing !== "key") {
+            // ToDo: also try to complete values
+            return [];
+        }
+
+        let result = this.extractor.allProperties(dataRef, jsonParsedResult.path, editingChunk.key || "");
+
+        if (editingChunk.key === null) {
+            // If there is no key, then we should autocomplete with open quote
+
+            result = result.map((s) => '"' + s + '": ');
+        } else {
+            // If there is a key, then we should autocomplete with closing quote only
+
+            result = result.map((s) => s + '": ');
+        }
+
+        return result;
+    }
 }
