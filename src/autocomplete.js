@@ -44,6 +44,12 @@ export class OpenapiAutocomplete {
         let tokens = tokenizeHeader(requestHeader);
         let dataRef = this.trieCompletion.match(tokens);
         
+        return this.completeRequestBodyByDataRef(dataRef, requestJson);
+    }
+
+    /// Expect full dataRef, e.g. "#/components/schemas/FilterRequest"
+    /// And partial request body, e.g. '{"vectors": {'
+    completeRequestBodyByDataRef(dataRef, requestJson) {
         if (!dataRef) {
             return [];
         }
