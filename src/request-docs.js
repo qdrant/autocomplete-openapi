@@ -1,10 +1,8 @@
 import { tokenizeHeader } from "./parse-request-header.js";
 
 const Methods = ['POST', 'GET', 'PUT', 'DELETE', 'PATCH', 'HEAD'];
-const response = await fetch(import.meta.env.BASE_URL + './openapi.json');
-const openapi = await response.json();
 
-function matchRequest(method,endpoint){
+function matchRequest(openapi, method, endpoint){
     const paths = Object.keys(openapi.paths);
     for (const path of paths){
         const matchReg = new RegExp('^/?' + path.slice(1,).replace(/{.*?}/g, '[-a-zA-Z0-9_<>]+') + '$');
@@ -19,7 +17,7 @@ function matchRequest(method,endpoint){
     return null
 }
 
-export function getRequestDocs(requestString){
+export function getRequestDocs(openapi, requestString){
     let tokens = tokenizeHeader(requestString);
     if(tokens.length < 2 || requestString.slice(0,2) == '//'){
         return null;
@@ -30,6 +28,6 @@ export function getRequestDocs(requestString){
     if (!Methods.includes(method)){
         return null
     }
-    return matchRequest(method, endpoint);
+    return matchRequest(openapi, method, endpoint);
 }
 
