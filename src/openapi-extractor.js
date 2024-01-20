@@ -7,6 +7,13 @@ export class OpenAPIMethod {
     }
 }
 
+export class OpenAPIMethodDefinition {
+    constructor(path, methodDefinitions) {
+        this.path = path;
+        this.methodDefinitions = methodDefinitions;
+    }
+}
+
 
 export class OpenAPIExtractor {
     constructor(openapi) {
@@ -27,6 +34,26 @@ export class OpenAPIExtractor {
         }
 
         return methods;
+    }
+
+    getMethodDefinitions() {
+        let paths = [];
+
+        for (let path in this.openapi.paths) {
+            let methodDefinitions = {}
+            for (let method in this.openapi.paths[path]) {
+                methodDefinitions[method] = {
+                    operationId: this.openapi.paths[path][method].operationId,
+                    tags: this.openapi.paths[path][method].tags
+                }
+            }
+            paths.push(new OpenAPIMethodDefinition(
+                path,
+                methodDefinitions
+            ));
+        }
+
+        return paths;
     }
 
     objectByRef(ref) {
