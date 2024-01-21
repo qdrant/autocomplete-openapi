@@ -2,7 +2,7 @@ import { tokenizeHeader } from "./parse-request-header.js";
 import { OpenAPIExtractor } from "./openapi-extractor.js";
 
 export class OpenapiDocs{
-    HTTPMethods = ['POST', 'GET', 'PUT', 'DELETE', 'PATCH', 'HEAD'];
+    HTTPMethods = ['post', 'get', 'put', 'delete', 'patch', 'head'];
 
     constructor(docsBaseURL, openapi){
         this.DOCS_BASE_URL = docsBaseURL;
@@ -11,7 +11,22 @@ export class OpenapiDocs{
         this.methods = this.extractor.getMethodDefinitions();
     }
 
-    matchRequest(method, endpoint){
+    getRequestDocs(requestString){
+        let tokens = tokenizeHeader(requestString);
+        const docsURL = this.fetchURL(tokens);
+
+        return docsURL;
+    }
+
+    fetchURL(tokens){
+        if(tokens.length < 2 || tokens[0].slice(0,2) == '//'){
+            return null;
+        }
+        const method = tokens[0].toLowerCase();
+        const endpoint = tokens.slice(1).join('/')
+        if (!this.HTTPMethods.includes(method)){
+            return null
+        }
         for (const request of this.methods){
             const matchReg = new RegExp('^/?' + request.path.slice(1,).replace(/{.*?}/g, '[-a-zA-Z0-9_<>]+') + '$');
             if(matchReg.test(endpoint) && request.methodDefinitions[method]){
@@ -20,18 +35,5 @@ export class OpenapiDocs{
             }
         }
         return null
-    }
-
-    getRequestDocs(requestString){
-        let tokens = tokenizeHeader(requestString);
-        if(tokens.length < 2 || requestString.slice(0,2) == '//'){
-            return null;
-        }
-        const method = tokens[0];
-        const endpoint = tokens.slice(1).join('/')
-        if (!this.HTTPMethods.includes(method)){
-            return null
-        }
-        return this.matchRequest(method.toLowerCase(), endpoint);
     }
 }
