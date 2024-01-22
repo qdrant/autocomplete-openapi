@@ -18,10 +18,10 @@ describe("OpenAPI extractor", () => {
     });
 
     it("should extract all method definitions", () => {
-        let allMethodDefinitions = new OpenAPIExtractor(openapi).getMethodDefinitions();
-        for (const method of allMethodDefinitions){
+        let allMethods = new OpenAPIExtractor(openapi).getAllMethods();
+        for (const method of allMethods){
             if (method.path == '/telemetry'){
-                assert.equal(method.methodDefinitions['get'].tags[0], 'service')
+                assert.equal(method.tags[0], 'service')
             }
         }
     })
