@@ -6,7 +6,7 @@ import { OpenapiDocs } from "../src/request-docs.js";
 
 describe("OpenAPI Docs", () => {
 
-    const apiDocs = new OpenapiDocs('host/', openapi)
+    const apiDocs = new OpenapiDocs(openapi)
 
     it("should return null for incorrect HTTP Method Name", () => {
         assert.equal(apiDocs.getRequestDocs('gat'), null)
@@ -25,23 +25,23 @@ describe("OpenAPI Docs", () => {
 
     it("should return url for both absolute & relative valid paths", () => {
         assert.equal(
-            apiDocs.getRequestDocs('GET telemetry'),
-            'host/service/operation/telemetry'
+            apiDocs.getRequestDocs('GET telemetry').operationId,
+            'telemetry'
         );
         assert.equal(
-            apiDocs.getRequestDocs('GET /telemetry'),
-            'host/service/operation/telemetry'
+            apiDocs.getRequestDocs('GET /telemetry').operationId,
+            'telemetry'
         );
     })
 
     it("should return url for valid request with path variables", () => {
         assert.equal(
-            apiDocs.getRequestDocs('DELETE collections/my_collection/index/my_field'),
-            'host/collections/operation/delete_field_index'
+            apiDocs.getRequestDocs('DELETE collections/my_collection/index/my_field').operationId,
+            'delete_field_index'
         )
         assert.equal(
-            apiDocs.getRequestDocs('PATCH collections/test'),
-            'host/collections/operation/update_collection'
+            apiDocs.getRequestDocs('PATCH collections/test').operationId,
+            'update_collection'
         )
     })
 })
