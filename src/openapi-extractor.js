@@ -1,9 +1,11 @@
 
 export class OpenAPIMethod {
-    constructor(method, path, body) {
+    constructor(method, path, body, operationId, tags) {
         this.method = method;
         this.path = path;
-        this.body = body; // defiition of the body
+        this.body = body; // definition of the body
+        this.operationId=operationId;
+        this.tags=tags;
     }
 }
 
@@ -21,7 +23,9 @@ export class OpenAPIExtractor {
                 methods.push(new OpenAPIMethod(
                     method,
                     path,
-                    this.openapi.paths[path][method]?.requestBody?.content?.['application/json']?.schema?.['$ref']
+                    this.openapi.paths[path][method]?.requestBody?.content?.['application/json']?.schema?.['$ref'],
+                    this.openapi.paths[path][method].operationId,
+                    this.openapi.paths[path][method].tags
                 ));
             }
         }

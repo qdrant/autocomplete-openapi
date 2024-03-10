@@ -17,12 +17,20 @@ describe("OpenAPI extractor", () => {
         }
     });
 
+    it("should extract all method definitions", () => {
+        let allMethods = new OpenAPIExtractor(openapi).getAllMethods();
+        for (const method of allMethods){
+            if (method.path == '/telemetry'){
+                assert.equal(method.tags[0], 'service')
+            }
+        }
+    })
+
     it("should extract model object by ref", () => {
         let objects = new OpenAPIExtractor(openapi).objectByRef("#/components/schemas/CreateCollection");
 
         // console.log(object);
     });
-
 
     it("should extract model object by path", () => {
         let objects = [];
