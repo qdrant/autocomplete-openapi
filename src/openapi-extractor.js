@@ -69,7 +69,7 @@ export class OpenAPIExtractor {
             ...this._objectsByPath(this.objectByRef(option["$ref"]), path)
           );
         }
-        if (option?.["type"] === "object") {
+        if (option?.["type"] === "object" || option?.["type"] === "array") {
           result.push(...this._objectsByPath(option, path));
         }
       }
