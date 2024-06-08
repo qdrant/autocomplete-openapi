@@ -32,18 +32,29 @@ describe("OpenAPI extractor", () => {
         // console.log(object);
     });
 
+
+    it("filter completion", () => {
+        let openapiExtractor = new OpenAPIExtractor(openapi);
+        let objects1 = [];
+        let objects2 = [];
+        objects1 = openapiExtractor.objectsByPath("#/components/schemas/Filter", ["must", 0, "match"]);
+        objects2 = openapiExtractor.objectsByPath("#/components/schemas/Filter", ["must", "match"]);
+        assert.deepEqual(objects1, objects2);
+
+    }); 
+
     it("should extract model object by path", () => {
         let objects = [];
         let openapiExtractor = new OpenAPIExtractor(openapi);
 
         objects = openapiExtractor.objectsByPath("#/components/schemas/CreateCollection", ["vectors", "image", "quantization_config"]);
-        assert.equal(objects.length, 2); // scalar and product
+        assert.equal(objects.length, 3); // scalar, product, binary
 
         objects = openapiExtractor.objectsByPath("#/components/schemas/CreateCollection", ["optimizers_config"]);
         assert.equal(objects.length, 1);
 
         objects = openapiExtractor.objectsByPath("#/components/schemas/CreateCollection", ["vectors", "quantization_config"]);
-        assert.equal(objects.length, 3); // scalar, product or VectorParams (quantization_config might be a name of a field)
+        assert.equal(objects.length, 4); // scalar, product, binary or VectorParams (quantization_config might be a name of a field)
 
         objects = openapiExtractor.objectsByPath("#/components/schemas/CreateCollection", ["vectors", "quantization_config", "scalar"]);
         assert.equal(objects.length, 1);
