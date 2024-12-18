@@ -21,7 +21,7 @@ describe("OpenAPI extractor", () => {
         let allMethods = new OpenAPIExtractor(openapi).getAllMethods();
         for (const method of allMethods){
             if (method.path == '/telemetry'){
-                assert.equal(method.tags[0], 'service')
+                assert.equal(method.tags[0], "Service");
             }
         }
     })

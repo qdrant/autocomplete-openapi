@@ -95,4 +95,54 @@ export class OpenapiAutocomplete {
 
     return result;
   }
+
+  getSnippets() {
+    let completions = [];
+    for (let method of this.methods) {
+      let completionCount = 1;
+      let insertText = `${method.method.toUpperCase()} `;
+
+      const parameters = method.parameters;
+      if (parameters) {
+        for (let param of parameters) {
+          if (param.in === "path" && param.required) {
+            const regex = new RegExp(`\\{${param.name}\\}`, "g");
+            method.path = method.path.replace(
+              regex,
+              `\${${completionCount}:${param.name}}`
+            );
+            completionCount++;
+          }
+        }
+      }
+      insertText += method.path;
+
+      const dataRef = method.body;
+      if (dataRef) {
+        let current = this.extractor.objectByRef(dataRef);
+        if (current.required && current.required.length > 0) {
+          insertText += "\n{";
+          for (let i = 0; i < current.required.length; i++) {
+            const key = current.required[i];
+            insertText += `\n  "${key}": $${completionCount}`;
+            completionCount++;
+            if (i < current.required.length - 1) {
+              insertText += ",";
+            }
+          }
+          insertText += "\n}";
+        }
+      }
+
+      completions.push({
+        label: method.operationId,
+        documentation: method.summary,
+        insertText: insertText,
+        kind: 1,
+        insertTextRules: 4,
+      });
+    }
+
+    return completions;
+  }
 }

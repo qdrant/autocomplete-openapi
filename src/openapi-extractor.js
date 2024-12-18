@@ -1,10 +1,12 @@
 export class OpenAPIMethod {
-  constructor(method, path, body, operationId, tags) {
+  constructor(method, path, body, operationId, tags, parameters,summary) {
     this.method = method;
     this.path = path;
     this.body = body; // definition of the body
     this.operationId = operationId;
     this.tags = tags;
+    this.parameters = parameters;
+    this.summary = summary;
   }
 }
 
@@ -26,7 +28,9 @@ export class OpenAPIExtractor {
               "application/json"
             ]?.schema?.["$ref"],
             this.openapi.paths[path][method].operationId,
-            this.openapi.paths[path][method].tags
+            this.openapi.paths[path][method].tags,
+            this.openapi.paths[path][method]?.parameters,
+            this.openapi.paths[path][method].summary
           )
         );
       }
