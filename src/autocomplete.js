@@ -77,23 +77,25 @@ export class OpenapiAutocomplete {
       return result;
     }
 
-    let result = this.extractor.allProperties(
-      dataRef,
-      jsonParsedResult.path,
-      editingChunk.key || ""
-    );
+    if (editingChunk.editing === "key") {
+      let result = this.extractor.allProperties(
+        dataRef,
+        jsonParsedResult.path,
+        editingChunk.key || ""
+      );
 
-    if (editingChunk.key === null) {
-      // If there is no key, then we should autocomplete with open quote
+      if (editingChunk.key === null) {
+        // If there is no key, then we should autocomplete with open quote
 
-      result = result.map((s) => '"' + s + '": ');
-    } else {
-      // If there is a key, then we should autocomplete with closing quote only
+        result = result.map((s) => '"' + s + '": ');
+      } else {
+        // If there is a key, then we should autocomplete with closing quote only
 
-      result = result.map((s) => s + '": ');
+        result = result.map((s) => s + '": ');
+      }
+      return result;
     }
-
-    return result;
+    return [];
   }
 
   getSnippets() {
