@@ -35,16 +35,20 @@ describe("Snippets", () => {
     let search_matrix_pairs = snippets.find(
       (s) => s.label === "search_matrix_pairs"
     );
-    assert.ok(
-      search_matrix_pairs.insertText ===
-        "POST /collections/${1:collection_name}/points/search/matrix/pairs"
+    assert.equal(
+      search_matrix_pairs.insertText,
+        "POST /collections/${1:collection_name}/points/search/matrix/pairs" +
+        "\n" +
+        "{\n" +
+        "  $2\n" +
+        "}"
     );
 
     let query_points_groups = snippets.find(
       (s) => s.label === "query_points_groups"
     );
-    assert.ok(
-      query_points_groups.insertText ===
+    assert.equal(
+      query_points_groups.insertText,
         "POST /collections/${1:collection_name}/points/query/groups\n" +
           "{\n" +
           '  "group_by": $2\n' +
