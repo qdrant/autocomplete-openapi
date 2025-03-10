@@ -345,6 +345,10 @@ class ParseResult {
 
 
   getObjectByPath() {
+    if (this.path === null) {
+      return null;
+    }
+
     let current = this.data;
     for (let i = 0; i < this.path.length; i++) {
       let pathElement = this.path[i];
