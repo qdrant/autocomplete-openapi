@@ -4,6 +4,7 @@ import { OpenAPIExtractor } from "./openapi-extractor.js";
 import { AutocompleteTrie } from "./trie-completion.js";
 import { partialParseJson } from "./json-parser.js";
 import { tokenizeHeader } from "./parse-request-header.js";
+import { generateRequestHeader, generateResponseBody } from './snippets.js';
 
 export class OpenapiAutocomplete {
   constructor(openapi, collections) {
@@ -77,22 +78,46 @@ export class OpenapiAutocomplete {
       return result;
     }
 
-    let result = this.extractor.allProperties(
-      dataRef,
-      jsonParsedResult.path,
-      editingChunk.key || ""
-    );
+    if (editingChunk.editing === "key") {
+      let result = this.extractor.allProperties(
+        dataRef,
+        jsonParsedResult.path,
+        editingChunk.key || ""
+      );
 
-    if (editingChunk.key === null) {
-      // If there is no key, then we should autocomplete with open quote
+      if (editingChunk.key === null) {
+        // If there is no key, then we should autocomplete with open quote
 
-      result = result.map((s) => '"' + s + '": ');
-    } else {
-      // If there is a key, then we should autocomplete with closing quote only
+        result = result.map((s) => '"' + s + '": ');
+      } else {
+        // If there is a key, then we should autocomplete with closing quote only
 
-      result = result.map((s) => s + '": ');
+        result = result.map((s) => s + '": ');
+      }
+      return result;
+    }
+    return [];
+  }
+
+  getSnippets() {
+    let completions = [];
+    for (let method of this.methods) {
+      let [insertText, completionCount] = generateRequestHeader(method);
+
+      const dataRef = method.body;
+      if (dataRef) {
+        let current = this.extractor.objectByRef(dataRef);
+        const generatedBody = generateResponseBody(current, completionCount);
+        insertText += "\n" + generatedBody;
+      }
+
+      completions.push({
+        label: method.operationId,
+        documentation: method.summary,
+        insertText: insertText,
+      });
     }
 
-    return result;
+    return completions;
   }
 }
