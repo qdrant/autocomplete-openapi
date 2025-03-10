@@ -28,6 +28,20 @@ describe("OpenAPI autocomplete", () => {
     assert.ok(completions.includes('Dot"'));
   });
 
+  it("autocompleteing values: incorrect key", () => {
+    let completions = [];
+    let requestHeader = "";
+    let body = "";
+
+    requestHeader = "PUT collections/my_collection";
+    body = `
+    {
+        vectors`;
+
+    completions = theAuto.completeRequestBody(requestHeader, body);
+    assert.ok(completions.length === 0);
+  });
+
   it("autocompleteing values: empty autocomplete ", () => {
     let completions = [];
     let requestHeader = "";

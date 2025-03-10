@@ -95,6 +95,10 @@ export class OpenAPIExtractor {
       return result;
     }
 
+    if (path === null) {
+      return [];
+    }
+
     if (path.length == 0) {
       return [current];
     }
